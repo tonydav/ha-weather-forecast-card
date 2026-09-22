@@ -905,7 +905,7 @@ export class WeatherForecastCardEditor
       case "forecast.extra_attribute":
         return "Select an extra attribute to display below each forecast.";
       case "forecast.wind_chip":
-        return "Adds a compact wind line (direction + sustained/gust) below each forecast slot. Units come from the weather entity.";
+        return "Adds a compact two-line wind chip (direction over sustained-gust, e.g. SSW over 7-15) below each forecast slot. Units come from the weather entity.";
       case "forecast.precipitation_bar":
         return "Disable to hide the vertical bar next to precipitation amounts.";
       case "forecast.precipitation_mm":

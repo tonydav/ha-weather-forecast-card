@@ -83,11 +83,12 @@ export class WfcForecastInfo extends LitElement {
   }
 
   /**
-   * Compact per-slot wind line, e.g. "SE 19/g30" (direction, sustained,
-   * gust) or "SE 19" when no gust is reported. Opt-in via
-   * `forecast.wind_chip`; renders nothing when the slot carries no wind
-   * data at all. Speed units are the weather entity's own (stated once in
-   * the card heading rather than repeated per slot).
+   * Compact per-slot wind chip on two stacked lines — direction over
+   * speed, e.g. "SSW" / "7-15" (sustained-gust) or "SE" / "19" when no
+   * gust is reported. Opt-in via `forecast.wind_chip`; renders nothing
+   * when the slot carries no wind data at all. Speed units are the
+   * weather entity's own (stated once in the card heading rather than
+   * repeated per slot).
    */
   private getWindChip(): TemplateResult | typeof nothing {
     if (!this.config?.forecast?.wind_chip) {
@@ -103,17 +104,19 @@ export class WfcForecastInfo extends LitElement {
     }
 
     const sustained = speed != null ? `${Math.round(speed)}` : "";
-    const gustText = gust != null ? `g${Math.round(gust)}` : "";
+    const gustText = gust != null ? `${Math.round(gust)}` : "";
     const speedText = sustained
       ? gustText
-        ? `${sustained}/${gustText}`
+        ? `${sustained}-${gustText}`
         : sustained
       : gustText;
 
-    return html`<span
-      class="wfc-forecast-slot-wind wfc-secondary"
-      style="display: block;"
-      >${(dir ? `${dir} ` : "") + speedText}</span
+    return html`<span class="wfc-forecast-slot-wind wfc-secondary"
+      >${dir
+        ? html`<span class="wfc-forecast-slot-wind-dir">${dir}</span>`
+        : nothing}${speedText
+        ? html`<span class="wfc-forecast-slot-wind-speed">${speedText}</span>`
+        : nothing}</span
     >`;
   }
 }

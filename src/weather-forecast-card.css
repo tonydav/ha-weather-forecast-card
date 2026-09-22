@@ -600,6 +600,16 @@ wfc-animation-provider.dark[has-clouds] ~ .wfc-container .wfc-current-secondary-
   font-size: var(--ha-font-size-s, 12px);
 }
 
+.wfc-forecast-slot-wind {
+  font-size: var(--ha-font-size-s, 12px);
+  line-height: var(--ha-line-height-condensed, 1.2);
+}
+
+.wfc-forecast-slot-wind-dir,
+.wfc-forecast-slot-wind-speed {
+  display: block;
+}
+
 .wfc-forecast-chart {
   height: 130px;
   width: var(--wfc-forecast-chart-width, auto);
