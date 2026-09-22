@@ -4,6 +4,19 @@ import { ExtendedHomeAssistant, WeatherForecastCardConfig } from "../types";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
+/**
+ * Formats a precipitation amount as compact mm text: whole millimetres at or
+ * above 1, one decimal below that, hidden at 0 (e.g. "3mm", "0.4mm", "").
+ */
+const formatCompactPrecipitation = (precipitation: number): string => {
+  if (!precipitation || precipitation <= 0) {
+    return "";
+  }
+  return precipitation < 1
+    ? `${precipitation.toFixed(1)}mm`
+    : `${Math.round(precipitation)}mm`;
+};
+
 @customElement("wfc-forecast-details")
 export class WfcForecastDetails extends LitElement {
   @property({ attribute: false }) hass!: ExtendedHomeAssistant;
@@ -21,8 +34,14 @@ export class WfcForecastDetails extends LitElement {
     }
 
     const precipitation = this.forecast.precipitation || 0;
-    const barHeightPct = this.computePrecipitationBarHeight(precipitation);
+    const showBar = this.config?.forecast?.precipitation_bar !== false;
+    const barHeightPct = showBar
+      ? this.computePrecipitationBarHeight(precipitation)
+      : 0;
     const precipitationAvailable = hasPrecipitation(this.forecast);
+    const amount = this.config?.forecast?.precipitation_mm
+      ? formatCompactPrecipitation(precipitation)
+      : precipitation.toFixed(1);
 
     return html`
       <div class="wfc-forecast-slot-temperature">
@@ -41,12 +60,14 @@ export class WfcForecastDetails extends LitElement {
           "wfc-not-available": !precipitationAvailable,
         })}
       >
-        <div
-          class="wfc-forecast-precip-amount-bar"
-          style="--forecast-precipitation-bar-height-pct: ${barHeightPct}%;"
-        ></div>
+        ${showBar
+          ? html`<div
+              class="wfc-forecast-precip-amount-bar"
+              style="--forecast-precipitation-bar-height-pct: ${barHeightPct}%;"
+            ></div>`
+          : nothing}
         <span class="wfc-forecast-precip-amount">
-          ${precipitation.toFixed(1)}
+          ${amount}
         </span>
       </div>
     `;

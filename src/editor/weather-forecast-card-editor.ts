@@ -857,6 +857,12 @@ export class WeatherForecastCardEditor
         return "Hourly forecast slots";
       case "forecast.daily_slots":
         return "Daily forecast slots";
+      case "forecast.wind_chip":
+        return "Show per-slot wind chip";
+      case "forecast.precipitation_bar":
+        return "Show precipitation intensity bar";
+      case "forecast.precipitation_mm":
+        return "Compact precipitation text";
       case "forecast_interactions":
         return `${this.hass!.localize("ui.card.weather.forecast")} ${(
           this.hass!.localize(
@@ -898,6 +904,12 @@ export class WeatherForecastCardEditor
         return "Select a weather attribute to display as secondary information in the current weather section.";
       case "forecast.extra_attribute":
         return "Select an extra attribute to display below each forecast.";
+      case "forecast.wind_chip":
+        return "Adds a compact wind line (direction + sustained/gust) below each forecast slot. Units come from the weather entity.";
+      case "forecast.precipitation_bar":
+        return "Disable to hide the vertical bar next to precipitation amounts.";
+      case "forecast.precipitation_mm":
+        return 'Formats precipitation as compact text with units, e.g. "3mm" or "0.4mm", instead of one-decimal numbers.';
       case "forecast_interactions":
         return "Action to perform when the forecast section is interacted with. Default tap action toggles between hourly and daily forecasts.";
       case "interactions":

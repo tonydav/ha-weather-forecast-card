@@ -42,6 +42,7 @@ export interface ForecastAttribute {
   pressure?: number;
   wind_speed?: number;
   wind_bearing?: number | string;
+  wind_gust_speed?: number;
   uv_index?: number;
   apparent_temperature?: number;
 }

@@ -2,7 +2,12 @@ import { html, LitElement, nothing, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { getUvIndexColor } from "../data/uv-index";
-import { ForecastAttribute, WeatherEntity } from "../data/weather";
+import {
+  ForecastAttribute,
+  WeatherEntity,
+  getNormalizedWindBearing,
+  getWindBearing,
+} from "../data/weather";
 import { ExtendedHomeAssistant, WeatherForecastCardConfig } from "../types";
 import { logger } from "../logger";
 import "./wfc-wind-indicator";
@@ -26,6 +31,7 @@ export class WfcForecastInfo extends LitElement {
     return html`
       <div class="wfc-forecast-slot-info">
         ${this.getExtraInfo() ?? nothing}
+        ${this.getWindChip()}
       </div>
     `;
   }
@@ -74,6 +80,41 @@ export class WfcForecastInfo extends LitElement {
     }
 
     return null;
+  }
+
+  /**
+   * Compact per-slot wind line, e.g. "SE 19/g30" (direction, sustained,
+   * gust) or "SE 19" when no gust is reported. Opt-in via
+   * `forecast.wind_chip`; renders nothing when the slot carries no wind
+   * data at all. Speed units are the weather entity's own (stated once in
+   * the card heading rather than repeated per slot).
+   */
+  private getWindChip(): TemplateResult | typeof nothing {
+    if (!this.config?.forecast?.wind_chip) {
+      return nothing;
+    }
+
+    const dir = getWindBearing(getNormalizedWindBearing(this.forecast));
+    const speed = this.forecast.wind_speed;
+    const gust = this.forecast.wind_gust_speed;
+
+    if (dir == null && speed == null && gust == null) {
+      return nothing;
+    }
+
+    const sustained = speed != null ? `${Math.round(speed)}` : "";
+    const gustText = gust != null ? `g${Math.round(gust)}` : "";
+    const speedText = sustained
+      ? gustText
+        ? `${sustained}/${gustText}`
+        : sustained
+      : gustText;
+
+    return html`<span
+      class="wfc-forecast-slot-wind wfc-secondary"
+      style="display: block;"
+      >${(dir ? `${dir} ` : "") + speedText}</span
+    >`;
   }
 }
 

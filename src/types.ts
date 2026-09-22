@@ -108,6 +108,12 @@ export interface WeatherForecastCardForecastConfig {
   temperature_precision?: number;
   show_attribute_selector?: boolean;
   default_chart_attribute?: ChartAttributes;
+  /** Show a compact wind line (direction + sustained/gust) under each slot */
+  wind_chip?: boolean;
+  /** Render the vertical precipitation intensity bar (default true) */
+  precipitation_bar?: boolean;
+  /** Compact precipitation text with unit, e.g. "3mm" / "0.4mm" */
+  precipitation_mm?: boolean;
 }
 
 export interface WeatherForecastCardCurrentConfig {
