@@ -6,11 +6,11 @@ import { classMap } from "lit/directives/class-map.js";
 
 /**
  * Formats a precipitation amount as compact mm text: whole millimetres at or
- * above 1, one decimal below that, hidden at 0 (e.g. "3mm", "0.4mm", "").
+ * above 1, one decimal below that, "0mm" for no rain (e.g. "3mm", "0.4mm").
  */
 const formatCompactPrecipitation = (precipitation: number): string => {
-  if (!precipitation || precipitation <= 0) {
-    return "";
+  if (precipitation <= 0) {
+    return "0mm";
   }
   return precipitation < 1
     ? `${precipitation.toFixed(1)}mm`
@@ -38,7 +38,11 @@ export class WfcForecastDetails extends LitElement {
     const barHeightPct = showBar
       ? this.computePrecipitationBarHeight(precipitation)
       : 0;
-    const precipitationAvailable = hasPrecipitation(this.forecast);
+    const precipitationAvailable = this.config?.forecast?.precipitation_mm
+      ? // Compact-mm mode: hide only when the amount itself is unreported;
+        // a genuine 0 renders as "0mm" rather than a blank slot.
+        this.forecast.precipitation != null
+      : hasPrecipitation(this.forecast);
     const amount = this.config?.forecast?.precipitation_mm
       ? formatCompactPrecipitation(precipitation)
       : precipitation.toFixed(1);
